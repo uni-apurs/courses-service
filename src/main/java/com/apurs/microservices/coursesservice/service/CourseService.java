@@ -12,4 +12,7 @@ public interface CourseService {
 	public abstract CourseDTO insert(CourseCreateDTO course);
 	public abstract CourseDTO update(CourseUpdateDTO course);
 	public abstract boolean delete(Integer id);
+	
+	public abstract Integer countStudentsByCourseId(Integer courseId);
+	public abstract List<CourseDTO> findCoursesByProfessorName(String professorName);
 }

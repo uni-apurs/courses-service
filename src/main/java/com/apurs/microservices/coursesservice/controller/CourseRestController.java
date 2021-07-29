@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.apurs.microservices.coursesservice.dto.CourseCreateDTO;
@@ -27,7 +28,10 @@ public class CourseRestController {
 	private CourseService courseService;
 	
 	@GetMapping("")
-	public List<CourseDTO> getCourse(){
+	public List<CourseDTO> getCourse(@RequestParam(required = false) String professorName){
+		if (!professorName.isEmpty())
+			return courseService.findCoursesByProfessorName(professorName);
+		
 		return courseService.findAll();
 	}
 	
@@ -49,7 +53,7 @@ public class CourseRestController {
 		if(courseService.update(course) != null)
 			return new ResponseEntity<>(HttpStatus.OK);
 		
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	@DeleteMapping("/{id}")
@@ -57,6 +61,15 @@ public class CourseRestController {
 		if(courseService.delete(id))
 			return new ResponseEntity<>(HttpStatus.OK);
 		
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	@GetMapping("/{id}/students/count")
+	public ResponseEntity<String> countStudentsByCourseId(@PathVariable("id") Integer courseId) {
+		Integer count = courseService.countStudentsByCourseId(courseId);
+		if (count > 0)
+			return new ResponseEntity<>("courseId: " + courseId + " | Student count: " + count, HttpStatus.OK);
+		
+		return new ResponseEntity<>("No students or invalid courseId.", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
