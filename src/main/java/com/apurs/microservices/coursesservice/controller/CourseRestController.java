@@ -28,8 +28,8 @@ public class CourseRestController {
 	private CourseService courseService;
 	
 	@GetMapping("")
-	public List<CourseDTO> getCourse(@RequestParam(required = false) String professorName){
-		if (!professorName.isEmpty())
+	public List<CourseDTO> getCourses(@RequestParam(required = false) String professorName){
+		if (professorName != null)
 			return courseService.findCoursesByProfessorName(professorName);
 		
 		return courseService.findAll();
